@@ -1,0 +1,156 @@
+
+<div class="page-header">
+  <h1>
+    Discovery
+    <a href="/pictures/new" class="btn btn btn-success"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span></a>
+  </h1>
+</div>
+
+<!-- Responsive, Isotope-based layout example -->
+<% if current_user != nil %>
+<div class="row">
+  <div class="col-xs-12">
+    <input type="text" id="quicksearch" placeholder="Search Pictures (start typing)" class="form-control">
+  </div>
+</div>
+
+<hr>
+
+<div class="row isotope-container">
+<% @pictures.each do |picture| %>
+  <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 isotope-item">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= picture.name %></h3>
+      </div>
+      <div class="panel-body">
+        <dl>
+          <dt><img src="<%= picture.image %>" class="img-responsive"> </dt>
+
+          <dd><%= picture.description %></dd>
+
+        </dl>
+
+        <div class="btn-group btn-group-justified">
+          <% if current_user.id != picture.user_id %>
+            <a href="/pictures/<%= picture.id %>" class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+            </a>
+            <% @favorite = Favorite.new  %>
+            <a input type="button" class="btn btn-warning" id="like" name="like" value="1" <%= "checked" if @favorite.favorite %>>
+              <i class="fa fa-star-o"></i>
+            </a>
+            <% @like = Like.new %>
+            <a input type="button" class="btn btn-danger" id="like" name="like" value="1" <%= "checked" if @like.like %>>
+            <!--plan to add the real likes in the future-->
+              <i class="fa fa-heart-o">  <span class="badge"><%= rand(25) %></span></i>
+            </a>
+          <% else %>
+            <a href="/pictures/<%= picture.id %>" class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+            </a>
+            <a href="/pictures/<%= picture.id %>/edit" class="btn btn-warning">
+              <i class="fa fa-edit"></i>
+            </a>
+            <a href="/delete_picture/<%= picture.id %>" class="btn btn-danger" rel="nofollow">
+              <i class="fa fa-trash-o"></i>
+            </a>
+          <% end  %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+</div>
+
+<% else %>
+<div class="row">
+  <div class="col-xs-12">
+    <input type="text" id="quicksearch" placeholder="Search Pictures (start typing)" class="form-control">
+  </div>
+</div>
+
+<hr>
+
+<div class="row isotope-container">
+<% @pictures.each do |picture| %>
+  <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 isotope-item">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= picture.name %></h3>
+      </div>
+      <div class="panel-body">
+        <dl>
+          <dt><img src="<%= picture.image %>" class="img-responsive"> </dt>
+
+          <dd><%= picture.description %></dd>
+
+        </dl>
+
+        <div class="btn-group btn-group-justified">
+            <a href="/pictures/<%= picture.id %>" class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+            </a>
+            <% @favorite = Favorite.new  %>
+            <a input type="button" class="btn btn-warning" id="like" name="like" value="1" <%= "checked" if @favorite.favorite %>>
+              <i class="fa fa-star-o"></i>
+            </a>
+            <% @like = Like.new %>
+                        <!--plan to add the real likes in the future-->
+            <a input type="button" class="btn btn-danger" id="like" name="like" value="1" <%= "checked" if @like.like %>>
+              <i class="fa fa-heart-o">  <span class="badge"><%= rand(25) %></span></i>
+            </a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+</div>
+<% end %>
+<!-- You can ignore the following. It's a quick and dirty example of how to get a Pinterest-style layout with quick search. -->
+<!-- JavaScript for Isotope layout and quicksearch -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.1.8/imagesloaded.pkgd.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.0.0/isotope.pkgd.min.js"></script>
+<script>
+  $(function() {
+    // quick search regex
+    var qsRegex;
+
+    // init Isotope
+    var $container = $('.isotope-container');
+
+    $container.imagesLoaded(function() {
+      $container.isotope({
+        itemSelector: '.isotope-item',
+        layoutMode: 'masonry',
+        filter: function() {
+          return qsRegex ? $(this).text().match( qsRegex ) : true;
+        }
+      })
+    });
+
+    // use value of search field to filter
+    var $quicksearch = $('#quicksearch').keyup( debounce( function() {
+      qsRegex = new RegExp( $quicksearch.val(), 'gi' );
+      $container.isotope();
+    }, 200 ) );
+
+  });
+
+  // debounce so filtering doesn't happen every millisecond
+  function debounce( fn, threshold ) {
+    var timeout;
+    return function debounced() {
+      if ( timeout ) {
+        clearTimeout( timeout );
+      }
+      function delayed() {
+        fn();
+        timeout = null;
+      }
+      timeout = setTimeout( delayed, threshold || 100 );
+    }
+  }
+</script>
+
+<!-- End responsive, Isotope-based layout example -->

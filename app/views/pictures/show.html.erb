@@ -1,0 +1,174 @@
+<!-- Responsive panel example-->
+<% if current_user != nil %>
+<div class="row">
+  <div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= @picture.name %></h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12">
+            <dl class="dl">
+
+              <dd><img src="<%= @picture.image %>" class="img-responsive"></dd>
+
+              <dd><%= @picture.description %></dd>
+
+              <dd><% @picture.tags.each do |tags| %><%= tags.tag %> <% end %></dd>
+
+
+            </dl>
+
+            <div class="btn-group btn-group-justified">
+          <% if current_user.id != @picture.user_id %>
+            <a href="/pictures/<%= @picture.id %>" class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+            </a>
+            <% @favorite = Favorite.new  %>
+            <a input type="button" class="btn btn-warning" id="like" name="like" value="1" <%= "checked" if @favorite.favorite %>>
+              <i class="fa fa-star-o"></i>
+            </a>
+            <% @like = Like.new %>
+                                    <!--plan to add the real likes in the future-->
+            <a input type="button" class="btn btn-danger" id="like" name="like" value="1" <%= "checked" if @like.like %>>
+              <i class="fa fa-heart-o">  <span class="badge"><%= rand(25) %></span></i>
+            </a>
+          <% else %>
+            <a href="/pictures/<%= @picture.id %>" class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+            </a>
+            <a href="/pictures/<%= @picture.id %>/edit" class="btn btn-warning">
+              <i class="fa fa-edit"></i>
+            </a>
+            <a href="/delete_picture/<%= @picture.id %>" class="btn btn-danger" rel="nofollow">
+              <i class="fa fa-trash-o"></i>
+            </a>
+          <% end  %>
+
+            </div>
+          </div>
+        </div>
+      </div>
+        <ul class="list-group">
+          <li class="list-group-item"><b>Comments</b></li>
+          <% @picture.comments.each do |comment| %>
+            <li class="list-group-item"><%= comment.comment %></li>
+          <% end %>
+        </ul>
+    </div>
+  </div>
+</div>
+
+<% else %>
+
+<div class="row">
+  <div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= @picture.name %></h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12">
+            <dl class="dl">
+
+              <dd><img src="<%= @picture.image %>" class="img-responsive"></dd>
+
+              <dd><%= @picture.description %></dd>
+
+              <dd><% @picture.tags.each do |tags| %><%= tags.tag %> <% end %></dd>
+
+
+            </dl>
+
+            <div class="btn-group btn-group-justified">
+            <a href="/pictures/<%= @picture.id %>" class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+            </a>
+            <% @favorite = Favorite.new  %>
+            <a input type="button" class="btn btn-warning" id="like" name="like" value="1" <%= "checked" if @favorite.favorite %>>
+              <i class="fa fa-star-o"></i>
+            </a>
+            <% @like = Like.new %>
+                                    <!--plan to add the real likes in the future-->
+            <a input type="button" class="btn btn-danger" id="like" name="like" value="1" <%= "checked" if @like.like %>>
+              <i class="fa fa-heart-o">  <span class="badge"><%= rand(25) %></span></i>
+            </a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+        <ul class="list-group">
+          <li class="list-group-item"><b>Comments</b></li>
+          <% @picture.comments.each do |comment| %>
+            <li class="list-group-item"><%= comment.comment %></li>
+          <% end %>
+        </ul>
+    </div>
+  </div>
+</div>
+<% end %>
+<!-- End responsive panel example -->
+
+<!-- Validation failure messages -->
+
+          <% @comment = Comment.new %>
+
+<!-- Validation failure messages -->
+
+<% if @comment.errors.any? %>
+  <% @comment.errors.full_messages.each do |message| %>
+    <div class="alert alert-dismissable alert-danger">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= message %>
+    </div>
+  <% end %>
+<% end %>
+
+
+<!-- Responsive panel example -->
+
+<div class="row">
+  <div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Add Comment</h3>
+      </div>
+      <div class="panel-body">
+        <form action="/create_comment" method="post" class="form-horizontal">
+          <!-- Hidden input for authenticity token to protect from forgery -->
+          <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+          <!-- Label and input for picture_id -->
+
+          <input name= "picture_id" value="<%= @picture.id  %>" type="hidden">
+
+          <input name= "user_id" value="<%= current_user  %>" type="hidden">
+
+
+          <!-- Label and input for comment -->
+          <div class="form-group">
+            <label for="comment" class="col-sm-2 control-label">
+              Comment
+            </label>
+            <div class="col-sm-10">
+              <textarea id="comment" name="comment" placeholder="Comment" class="form-control" rows="3"><%= @comment.comment %></textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button class="btn btn-success">
+                Create Comment
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End responsive panel example -->
+
